@@ -12,6 +12,11 @@
 		0676A80721F7D13E002C567A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0676A80521F7D13E002C567A /* Main.storyboard */; };
 		0676A80921F7D140002C567A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0676A80821F7D140002C567A /* Assets.xcassets */; };
 		0676A80C21F7D140002C567A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0676A80A21F7D140002C567A /* LaunchScreen.storyboard */; };
+		0676A81421F7D1BD002C567A /* XCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81321F7D1BC002C567A /* XCollectionView.swift */; };
+		0676A81621F7D2D5002C567A /* VMViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81521F7D2D5002C567A /* VMViewController.swift */; };
+		0676A81821F7D2FD002C567A /* CellObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81721F7D2FD002C567A /* CellObject.swift */; };
+		0676A81B21F7D3E7002C567A /* CVDraggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81921F7D3E7002C567A /* CVDraggable.swift */; };
+		0676A81C21F7D3E7002C567A /* CVDraggable.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0676A81A21F7D3E7002C567A /* CVDraggable.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +27,11 @@
 		0676A80821F7D140002C567A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0676A80B21F7D140002C567A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0676A80D21F7D140002C567A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0676A81321F7D1BC002C567A /* XCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCollectionView.swift; sourceTree = "<group>"; };
+		0676A81521F7D2D5002C567A /* VMViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMViewController.swift; sourceTree = "<group>"; };
+		0676A81721F7D2FD002C567A /* CellObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellObject.swift; sourceTree = "<group>"; };
+		0676A81921F7D3E7002C567A /* CVDraggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVDraggable.swift; sourceTree = "<group>"; };
+		0676A81A21F7D3E7002C567A /* CVDraggable.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CVDraggable.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,11 +65,16 @@
 			isa = PBXGroup;
 			children = (
 				0676A80121F7D13E002C567A /* AppDelegate.swift */,
-				0676A80321F7D13E002C567A /* ViewController.swift */,
-				0676A80521F7D13E002C567A /* Main.storyboard */,
+				0676A80D21F7D140002C567A /* Info.plist */,
 				0676A80821F7D140002C567A /* Assets.xcassets */,
 				0676A80A21F7D140002C567A /* LaunchScreen.storyboard */,
-				0676A80D21F7D140002C567A /* Info.plist */,
+				0676A80521F7D13E002C567A /* Main.storyboard */,
+				0676A80321F7D13E002C567A /* ViewController.swift */,
+				0676A81521F7D2D5002C567A /* VMViewController.swift */,
+				0676A81721F7D2FD002C567A /* CellObject.swift */,
+				0676A81321F7D1BC002C567A /* XCollectionView.swift */,
+				0676A81921F7D3E7002C567A /* CVDraggable.swift */,
+				0676A81A21F7D3E7002C567A /* CVDraggable.xib */,
 			);
 			path = CollectionViewReordering;
 			sourceTree = "<group>";
@@ -124,6 +139,7 @@
 			files = (
 				0676A80C21F7D140002C567A /* LaunchScreen.storyboard in Resources */,
 				0676A80921F7D140002C567A /* Assets.xcassets in Resources */,
+				0676A81C21F7D3E7002C567A /* CVDraggable.xib in Resources */,
 				0676A80721F7D13E002C567A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -135,8 +151,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0676A81821F7D2FD002C567A /* CellObject.swift in Sources */,
 				0676A80421F7D13E002C567A /* ViewController.swift in Sources */,
+				0676A81B21F7D3E7002C567A /* CVDraggable.swift in Sources */,
+				0676A81421F7D1BD002C567A /* XCollectionView.swift in Sources */,
 				0676A80221F7D13E002C567A /* AppDelegate.swift in Sources */,
+				0676A81621F7D2D5002C567A /* VMViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
