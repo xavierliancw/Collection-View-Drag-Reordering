@@ -14,6 +14,7 @@ class ViewController: UIViewController
     
     private let CELL_ID = "this is the ID for the cells lol"
     private lazy var vm: VMViewController = {return VMViewController()}()
+    private var longPressGesture: UILongPressGestureRecognizer!
     
     //MARK: Outlets
     
@@ -66,6 +67,27 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         }
     }
     
+    //MARK: Drag and Drop
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        canMoveItemAt indexPath: IndexPath) -> Bool
+    {
+        if indexPath.section == 0
+        {
+            return true
+        }
+        return false
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath,
+                        to destinationIndexPath: IndexPath)
+    {
+        print("Starting Index: \(sourceIndexPath.item)")
+        print("Ending Index: \(destinationIndexPath.item)")
+    }
+    
+    //MARK: UI Behavior
+    
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize
@@ -75,12 +97,48 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     
     private func setupCV()
     {
+        longPressGesture = UILongPressGestureRecognizer(
+            target: self, action: #selector(handleLongGesture(gesture:))
+        )
+        cv.addGestureRecognizer(longPressGesture)
         cv.delegate = self
         cv.dataSource = self
         cv.flowLayout?.minimumLineSpacing = 1
         cv.register(UINib(nibName: String(describing: CVDraggable.self), bundle: nil),
                     forCellWithReuseIdentifier: CELL_ID)
         cv.reloadData()
+    }
+    
+    @objc func handleLongGesture(gesture: UILongPressGestureRecognizer)
+    {
+        switch(gesture.state)
+        {
+        case .began:
+            guard let selectedIndexPath = cv.indexPathForItem(at: gesture.location(in: cv)) else {
+                break
+            }
+            if let cell = cv.cellForItem(at: selectedIndexPath) as? CVDraggable,
+                cell.gestureIsOnGrip(gesture)
+            {
+                cv.beginInteractiveMovementForItem(at: selectedIndexPath)
+            }
+        case .changed:
+            if let gestVw = gesture.view
+            {
+                //Prevent lateral movement during dragging
+                cv.updateInteractiveMovementTargetPosition(
+                    CGPoint(x: cv.center.x, y: gesture.location(in: gestVw).y)
+                )
+            }
+            else
+            {
+                cv.cancelInteractiveMovement()
+            }
+        case .ended:
+            cv.endInteractiveMovement()
+        default:
+            cv.cancelInteractiveMovement()
+        }
     }
 }
 

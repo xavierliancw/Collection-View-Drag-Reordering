@@ -32,6 +32,11 @@ class CVDraggable: UICollectionViewCell
     
     //MARK: Functions
     
+    func gestureIsOnGrip(_ gesture: UILongPressGestureRecognizer) -> Bool
+    {
+        return gripVw.frame.contains(gesture.location(in: self))
+    }
+    
     func populate(with data: CellObject)
     {
         topLbl.text = data.title
