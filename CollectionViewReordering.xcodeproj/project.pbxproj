@@ -17,6 +17,8 @@
 		0676A81821F7D2FD002C567A /* CellObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81721F7D2FD002C567A /* CellObject.swift */; };
 		0676A81B21F7D3E7002C567A /* CVDraggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81921F7D3E7002C567A /* CVDraggable.swift */; };
 		0676A81C21F7D3E7002C567A /* CVDraggable.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0676A81A21F7D3E7002C567A /* CVDraggable.xib */; };
+		0676A81F21F80129002C567A /* RVHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0676A81D21F80129002C567A /* RVHeader.swift */; };
+		0676A82021F80129002C567A /* RVHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0676A81E21F80129002C567A /* RVHeader.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		0676A81721F7D2FD002C567A /* CellObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellObject.swift; sourceTree = "<group>"; };
 		0676A81921F7D3E7002C567A /* CVDraggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVDraggable.swift; sourceTree = "<group>"; };
 		0676A81A21F7D3E7002C567A /* CVDraggable.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CVDraggable.xib; sourceTree = "<group>"; };
+		0676A81D21F80129002C567A /* RVHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RVHeader.swift; sourceTree = "<group>"; };
+		0676A81E21F80129002C567A /* RVHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RVHeader.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,8 @@
 				0676A81321F7D1BC002C567A /* XCollectionView.swift */,
 				0676A81921F7D3E7002C567A /* CVDraggable.swift */,
 				0676A81A21F7D3E7002C567A /* CVDraggable.xib */,
+				0676A81D21F80129002C567A /* RVHeader.swift */,
+				0676A81E21F80129002C567A /* RVHeader.xib */,
 			);
 			path = CollectionViewReordering;
 			sourceTree = "<group>";
@@ -138,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0676A80C21F7D140002C567A /* LaunchScreen.storyboard in Resources */,
+				0676A82021F80129002C567A /* RVHeader.xib in Resources */,
 				0676A80921F7D140002C567A /* Assets.xcassets in Resources */,
 				0676A81C21F7D3E7002C567A /* CVDraggable.xib in Resources */,
 				0676A80721F7D13E002C567A /* Main.storyboard in Resources */,
@@ -157,6 +164,7 @@
 				0676A81421F7D1BD002C567A /* XCollectionView.swift in Sources */,
 				0676A80221F7D13E002C567A /* AppDelegate.swift in Sources */,
 				0676A81621F7D2D5002C567A /* VMViewController.swift in Sources */,
+				0676A81F21F80129002C567A /* RVHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

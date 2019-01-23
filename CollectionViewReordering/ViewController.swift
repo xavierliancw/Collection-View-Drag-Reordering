@@ -13,6 +13,7 @@ class ViewController: UIViewController
     //MARK: Private Properties
     
     private let CELL_ID = "this is the ID for the cells lol"
+    private let HEADER_ID = "the header IDD"
     private lazy var vm: VMViewController = {return VMViewController()}()
     private var longPressGesture: UILongPressGestureRecognizer!
     
@@ -38,13 +39,21 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     
     func numberOfSections(in collectionView: UICollectionView) -> Int
     {
-        return 1
+        return vm.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int
     {
-        return vm.data.count
+        switch section
+        {
+        case 0:
+            return vm.section0Data.count
+        case 1:
+            return vm.section1Data.count
+        default:
+            return 0
+        }
     }
     
     //MARK: Cell Reuse
@@ -55,15 +64,38 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         return collectionView.dequeueReusableCell(withReuseIdentifier: CELL_ID, for: indexPath)
     }
     
+    func collectionView(_ collectionView: UICollectionView,
+                        viewForSupplementaryElementOfKind kind: String,
+                        at indexPath: IndexPath) -> UICollectionReusableView
+    {
+        return collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HEADER_ID,
+            for: indexPath
+        )
+    }
+    
     //MARK: Data Population
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath)
     {
-        if let cell = cell as? CVDraggable,
-            0 ..< vm.data.count ~= indexPath.item
+        if let cell = cell as? CVDraggable
         {
-            cell.populate(with: vm.data[indexPath.item])
+            switch indexPath.section
+            {
+            case 0:
+                if 0 ..< vm.section0Data.count ~= indexPath.item
+                {
+                    cell.populate(with: vm.section0Data[indexPath.item])
+                }
+            case 1:
+                if 0 ..< vm.section1Data.count ~= indexPath.item
+                {
+                    cell.populate(with: vm.section1Data[indexPath.item])
+                }
+            default:
+                break
+            }
         }
     }
     
@@ -72,18 +104,36 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     func collectionView(_ collectionView: UICollectionView,
                         canMoveItemAt indexPath: IndexPath) -> Bool
     {
-        if indexPath.section == 0
-        {
-            return true
-        }
-        return false
+        return true
     }
     
     func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath,
                         to destinationIndexPath: IndexPath)
     {
-        print("Starting Index: \(sourceIndexPath.item)")
-        print("Ending Index: \(destinationIndexPath.item)")
+        var item: CellObject?
+        switch sourceIndexPath.section
+        {
+        case 0:
+            item = vm.section0Data[sourceIndexPath.item]
+            vm.section0Data.remove(at: sourceIndexPath.item)
+        case 1:
+            item = vm.section1Data[sourceIndexPath.item]
+            vm.section1Data.remove(at: sourceIndexPath.item)
+        default:
+            break
+        }
+        if let item = item
+        {
+            switch destinationIndexPath.section
+            {
+            case 0:
+                vm.section0Data.insert(item, at: destinationIndexPath.item)
+            case 1:
+                vm.section1Data.insert(item, at: destinationIndexPath.item)
+            default:
+                break
+            }
+        }
     }
     
     //MARK: UI Behavior
@@ -93,6 +143,13 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                         sizeForItemAt indexPath: IndexPath) -> CGSize
     {
         return CGSize(width: collectionView.bounds.width, height: 38)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForHeaderInSection section: Int) -> CGSize
+    {
+        return CGSize(width: collectionView.bounds.width, height: 50)
     }
     
     private func setupCV()
@@ -106,10 +163,13 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         cv.flowLayout?.minimumLineSpacing = 1
         cv.register(UINib(nibName: String(describing: CVDraggable.self), bundle: nil),
                     forCellWithReuseIdentifier: CELL_ID)
+        cv.register(UINib(nibName: String(describing: RVHeader.self), bundle: nil),
+                    forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: HEADER_ID)
         cv.reloadData()
     }
     
-    @objc func handleLongGesture(gesture: UILongPressGestureRecognizer)
+    @objc private func handleLongGesture(gesture: UILongPressGestureRecognizer)
     {
         switch(gesture.state)
         {

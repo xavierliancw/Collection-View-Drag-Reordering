@@ -12,7 +12,9 @@ class VMViewController
 {
     //MARK: Properties
     
-    var data = [
+    let numberOfSections = 2
+    var section0Data = [CellObject(title: "up here", subTitle: "uhh I'm speshul")]
+    var section1Data = [
         CellObject(title: "one", subTitle: "sub 1"),
         CellObject(title: "two", subTitle: "sub 2"),
         CellObject(title: "three", subTitle: "sub 3"),
