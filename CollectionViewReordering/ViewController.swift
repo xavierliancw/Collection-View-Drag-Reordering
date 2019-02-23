@@ -16,7 +16,10 @@ class ViewController: UIViewController
     private let HEADER_ID = "the header IDD"
     private lazy var vm: VMViewController = {return VMViewController()}()
     private var longPressGesture: UILongPressGestureRecognizer!
+
     
+    var temporaryDummyCellPath: NSIndexPath?
+
     //MARK: Outlets
     
     @IBOutlet private var cv: XCollectionView!
@@ -41,19 +44,33 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     {
         return vm.numberOfSections
     }
+
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int
     {
+        var count: Int
+
         switch section
         {
         case 0:
-            return vm.section0Data.count
+            count = vm.section0Data.count
         case 1:
-            return vm.section1Data.count
+            count = vm.section1Data.count
         default:
-            return 0
+            count = 0
         }
+
+        // special case: about to move a cell out of a section with only 1 item
+        // make sure to leave a dummy cell
+        if section == temporaryDummyCellPath?.section {
+            return 2
+        }
+//        let numberOfElementsInSection = collectionView(cv, numberOfItemsInSection: section)
+
+        // always keep one item in each section for the dummy cell
+        return max(count, 1)
+
     }
     
     //MARK: Cell Reuse
@@ -100,6 +117,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     }
     
     //MARK: Drag and Drop
+
+
     
     func collectionView(_ collectionView: UICollectionView,
                         canMoveItemAt indexPath: IndexPath) -> Bool
@@ -134,6 +153,27 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                 break
             }
         }
+
+
+        collectionView.performBatchUpdates({
+
+            // if original section is left with no pages, add a dummy cell or keep already added dummy cell
+            if self.collectionView(cv,numberOfItemsInSection: sourceIndexPath.section) == 0 {
+                if self.temporaryDummyCellPath == nil {
+                    let dummyPath = IndexPath(item: 0, section: sourceIndexPath.section)
+                    collectionView.insertItems(at: [dummyPath])
+                } else {
+                    // just keep the temporary dummy we already created
+                    self.temporaryDummyCellPath = nil
+                }
+            }
+
+            // if new section previously had no pages remove the dummy cell
+            if self.collectionView(cv,numberOfItemsInSection: sourceIndexPath.section) == 1 {
+                let dummyPath = IndexPath(item: 0, section: destinationIndexPath.section)
+                collectionView.deleteItems(at: [dummyPath])
+            }
+        }, completion: nil)
     }
     
     //MARK: UI Behavior
@@ -168,20 +208,31 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                     withReuseIdentifier: HEADER_ID)
         cv.reloadData()
     }
-    
-    @objc private func handleLongGesture(gesture: UILongPressGestureRecognizer)
+
+
+    @objc private func handleLongGesture(gesture: UIPanGestureRecognizer)
     {
         switch(gesture.state)
         {
-        case .began:
+        case UIGestureRecognizer.State.began:
             guard let selectedIndexPath = cv.indexPathForItem(at: gesture.location(in: cv)) else {
                 break
             }
-            if let cell = cv.cellForItem(at: selectedIndexPath) as? CVDraggable,
-                cell.gestureIsOnGrip(gesture)
+
+            // temporarily add a dummy cell to this section
+            let numberOfElementsInSection = collectionView(cv, numberOfItemsInSection: selectedIndexPath.section)
+
+            if numberOfElementsInSection == 1
             {
-                cv.beginInteractiveMovementForItem(at: selectedIndexPath)
+                temporaryDummyCellPath = NSIndexPath(row: 1, section: selectedIndexPath.section)
+                cv.insertItems(at: [temporaryDummyCellPath! as IndexPath])
             }
+
+//            if let cell = cv.cellForItem(at: selectedIndexPath) as? CVDraggable,
+//                cell.gestureIsOnGrip(gesture)
+//            {
+                cv.beginInteractiveMovementForItem(at: selectedIndexPath)
+//            }
         case .changed:
             if let gestVw = gesture.view
             {
@@ -196,8 +247,19 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
             }
         case .ended:
             cv.endInteractiveMovement()
+
+            // remove dummy path if not already removed
+            if let dummyPath = self.temporaryDummyCellPath {
+                temporaryDummyCellPath = nil
+                cv.deleteItems(at: [dummyPath as IndexPath])
+            }
         default:
             cv.cancelInteractiveMovement()
+            // remove dummy path if not already removed
+            if let dummyPath = self.temporaryDummyCellPath {
+                temporaryDummyCellPath = nil
+                cv.deleteItems(at: [dummyPath as IndexPath])
+            }
         }
     }
 }
