@@ -116,7 +116,13 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                         targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath,
                         toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath
     {
-//        print(cv.numberOfItems(inSection: 0)) //Possible solution
+        //This isn't necessary, but it's good to have this here for future reference
+//        if cv.numberOfItems(inSection: 0) < 2
+//        {
+//            let context = UICollectionViewFlowLayoutInvalidationContext.init()
+//            context.invalidateSupplementaryElements(ofKind: UICollectionView.elementKindSectionHeader, at: [IndexPath(item: 0, section: 0)])
+//            cv.collectionViewLayout.invalidateLayout(with: context)
+//        }
         if proposedIndexPath.section == 0 && proposedIndexPath.item == 0
         {
             return IndexPath(item: 1, section: 0)
@@ -175,7 +181,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                         layout collectionViewLayout: UICollectionViewLayout,
                         referenceSizeForHeaderInSection section: Int) -> CGSize
     {
-        return CGSize(width: collectionView.bounds.width, height: 50)
+        return section == 0 && cv.numberOfItems(inSection: section) < 2
+            ? CGSize(width: collectionView.bounds.width, height: 0)
+            : CGSize(width: collectionView.bounds.width, height: 50)
     }
     
     private func setupCV()
@@ -228,4 +236,3 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         }
     }
 }
-
