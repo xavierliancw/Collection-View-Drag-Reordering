@@ -48,4 +48,50 @@ class VMViewController
         CellObject(title: "31", subTitle: "sub 31"),
         CellObject(title: "32", subTitle: "sub 32")
     ]
+    
+    //MARK: Private Properties
+    
+    private var dataInLimbo: (CellObject, IndexPath)?
+    
+    //MARK: Functions
+    
+    func dataCount(for section: Int) -> Int
+    {
+        switch section
+        {
+        case 0:
+            return section0Data.count
+        case 1:
+            return section1Data.count
+        default:
+            return 0
+        }
+    }
+    
+    func enterReorderLimbo(for ip: IndexPath)
+    {
+        switch ip.section
+        {
+        case 0:
+            dataInLimbo = (section0Data[ip.item], ip)
+            section0Data.remove(at: ip.item)
+        case 1:
+            dataInLimbo = (section1Data[ip.item], ip)
+            section1Data.remove(at: ip.item)
+        default:
+            if let limbo = dataInLimbo
+            {
+                switch limbo.1.section
+                {
+                case 0:
+                    section0Data.insert(limbo.0, at: limbo.1.item)
+                case 1:
+                    section1Data.insert(limbo.0, at: limbo.1.item)
+                default:
+                    break
+                }
+            }
+            dataInLimbo = nil
+        }
+    }
 }

@@ -16,6 +16,7 @@ class ViewController: UIViewController
     private let HEADER_ID = "the header IDD"
     private lazy var vm: VMViewController = {return VMViewController()}()
     private var longPressGesture: UILongPressGestureRecognizer!
+    private var dummyCellIsInstalled = false
     
     //MARK: Outlets
     
@@ -48,7 +49,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         switch section
         {
         case 0:
-            return vm.section0Data.count
+            return dummyCellIsInstalled ? vm.section0Data.count + 1 : vm.section0Data.count
         case 1:
             return vm.section1Data.count
         default:
@@ -142,7 +143,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        return CGSize(width: collectionView.bounds.width, height: 38)
+        return dummyCellIsInstalled && indexPath.item == 0 ? .zero : CGSize(width: collectionView.bounds.width, height: 38)
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -180,6 +181,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
             if let cell = cv.cellForItem(at: selectedIndexPath) as? CVDraggable,
                 cell.gestureIsOnGrip(gesture)
             {
+                installDummyCell()
                 cv.beginInteractiveMovementForItem(at: selectedIndexPath)
             }
         case .changed:
@@ -189,15 +191,40 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                 cv.updateInteractiveMovementTargetPosition(
                     CGPoint(x: cv.center.x, y: gesture.location(in: gestVw).y)
                 )
+                //                if (cv.indexPathForItem(at: gestLocation) == nil)
+                //                {
+                //                    cv.insertItems(at: [IndexPath(item: 0, section: 0)])
+                //                }
             }
             else
             {
                 cv.cancelInteractiveMovement()
+                uninstallDummyCell()
             }
         case .ended:
             cv.endInteractiveMovement()
+            uninstallDummyCell()
         default:
             cv.cancelInteractiveMovement()
+            uninstallDummyCell()
+        }
+    }
+    
+    func installDummyCell()
+    {
+        if !dummyCellIsInstalled
+        {
+            dummyCellIsInstalled = true
+            cv.insertItems(at: [IndexPath(item: 0, section: 0)])
+        }
+    }
+    
+    func uninstallDummyCell()
+    {
+        if dummyCellIsInstalled
+        {
+            dummyCellIsInstalled = false
+            cv.deleteItems(at: [IndexPath(item: 0, section: 0)])
         }
     }
 }
