@@ -14,8 +14,16 @@ class ViewController: UIViewController
     
     private let CELL_ID = "this is the ID for the cells lol"
     private let HEADER_ID = "the header IDD"
+    private let INVIS_ID = "invisible cell"
     private lazy var vm: VMViewController = {return VMViewController()}()
     private var longPressGesture: UILongPressGestureRecognizer!
+    private lazy var invisCell: UICollectionViewCell = {
+        let cell = UICollectionViewCell()
+        return cell
+    }()
+    private var invisCellShouldBeInstalled: Bool {
+        return cv.numberOfItems(inSection: 0) == 0
+    }
     
     //MARK: Outlets
     
@@ -48,7 +56,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         switch section
         {
         case 0:
-            return vm.section0Data.count
+            return vm.section0Data.count + 1
         case 1:
             return vm.section1Data.count
         default:
@@ -61,7 +69,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: CELL_ID, for: indexPath)
+        let ID: String = indexPath.section == 0 && indexPath.item == 0
+            ? INVIS_ID
+            : CELL_ID
+        return collectionView.dequeueReusableCell(withReuseIdentifier: ID, for: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -84,9 +95,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
             switch indexPath.section
             {
             case 0:
-                if 0 ..< vm.section0Data.count ~= indexPath.item
+                if 0 ..< vm.section0Data.count ~= indexPath.item - 1
                 {
-                    cell.populate(with: vm.section0Data[indexPath.item])
+                    cell.populate(with: vm.section0Data[indexPath.item - 1])
                 }
             case 1:
                 if 0 ..< vm.section1Data.count ~= indexPath.item
@@ -102,9 +113,21 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
     //MARK: Drag and Drop
     
     func collectionView(_ collectionView: UICollectionView,
+                        targetIndexPathForMoveFromItemAt originalIndexPath: IndexPath,
+                        toProposedIndexPath proposedIndexPath: IndexPath) -> IndexPath
+    {
+//        print(cv.numberOfItems(inSection: 0)) //Possible solution
+        if proposedIndexPath.section == 0 && proposedIndexPath.item == 0
+        {
+            return IndexPath(item: 1, section: 0)
+        }
+        return proposedIndexPath
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
                         canMoveItemAt indexPath: IndexPath) -> Bool
     {
-        return true
+        return !(indexPath.section == 0 && indexPath.item == 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath,
@@ -114,8 +137,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         switch sourceIndexPath.section
         {
         case 0:
-            item = vm.section0Data[sourceIndexPath.item]
-            vm.section0Data.remove(at: sourceIndexPath.item)
+            item = vm.section0Data[sourceIndexPath.item - 1]
+            vm.section0Data.remove(at: sourceIndexPath.item - 1)
         case 1:
             item = vm.section1Data[sourceIndexPath.item]
             vm.section1Data.remove(at: sourceIndexPath.item)
@@ -127,7 +150,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
             switch destinationIndexPath.section
             {
             case 0:
-                vm.section0Data.insert(item, at: destinationIndexPath.item)
+                vm.section0Data.insert(item, at: destinationIndexPath.item - 1)
             case 1:
                 vm.section1Data.insert(item, at: destinationIndexPath.item)
             default:
@@ -142,7 +165,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        return CGSize(width: collectionView.bounds.width, height: 38)
+        let height: CGFloat = indexPath.section == 0 && indexPath.item == 0
+            ? 1
+            : 38
+        return CGSize(width: collectionView.bounds.width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -166,6 +192,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource,
         cv.register(UINib(nibName: String(describing: RVHeader.self), bundle: nil),
                     forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
                     withReuseIdentifier: HEADER_ID)
+        cv.register(UICollectionViewCell.self, forCellWithReuseIdentifier: INVIS_ID)
         cv.reloadData()
     }
     
